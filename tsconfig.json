@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es5",
+      "es6",
+      "webworker"
+    ],
+    "target": "esnext",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "declaration": false,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "src",
+    "baseUrl": "src"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "**/__tests__",
+    "**/__fixtures__",
+    "node_modules"
+  ]
+}
