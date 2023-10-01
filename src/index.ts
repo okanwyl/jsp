@@ -71,6 +71,12 @@ class ClassFileReader {
                     offset += 3 + length;
                     break;
                 }
+                case 3: {
+                    const value = this._buffer.readInt32BE(offset + 1);
+                    this.constantPoolArray[i] = { tag, value };
+                    offset += 5;
+                    break;
+                }
                 case 4: {
                     const value = this._buffer.readFloatBE(offset + 1);
 
@@ -78,12 +84,24 @@ class ClassFileReader {
                     offset += 5;
                     break;
                 }
+
                 case 5: {
                     const value = this._buffer.readBigInt64BE(offset + 1);
 
                     this.constantPoolArray[i] = { tag, value };
                     offset += 9;
-                    i++; // Skip next index, CONSTANT_Long takes two entries in constant pool.
+                    i++;
+                    break;
+                }
+
+                case 6: {
+                    const highBytes = this._buffer.readUInt32BE(offset + 1);
+                    const lowBytes = this._buffer.readUInt32BE(offset + 5);
+                    const doubleValue = new Float64Array(new Uint32Array([lowBytes, highBytes]).buffer)[0];
+
+                    this.constantPoolArray[i] = { tag, value: doubleValue };
+                    offset += 9;
+                    i++;
                     break;
                 }
                 case 7: {
@@ -126,6 +144,14 @@ class ClassFileReader {
                     offset += 5;
                     break;
                 }
+                case 12: {
+                    const nameIndex = this._buffer.readUint16BE(offset + 1);
+                    const descriptorIndex = this._buffer.readUint16BE(offset + 3);
+
+                    this.constantPoolArray[i] = { tag, nameIndex, descriptorIndex };
+                    offset += 5;
+                    break;
+                }
 
                 default: {
                     throw new Error(`Unrecognized constant pool tag: ${tag}`);
@@ -143,12 +169,10 @@ class ClassFileReader {
     }
 }
 
-// Using it:
 try {
     const reader = new ClassFileReader("../resources/TestClass.class");
     reader.parseConstantPool();
     console.log(reader.constantPoolArray);
-    // reader.compiledFrom();
 } catch (error) {
     console.error(error);
 }
